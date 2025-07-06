@@ -27,6 +27,13 @@ npx supabase start
 # push DB schema & seeds
 npx supabase db reset
 
+# Create basic user
+cd my-app/
+
+node create-user.js
+
+
+
 # run dev server
 npm run dev
 ```

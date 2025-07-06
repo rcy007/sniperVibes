@@ -77,10 +77,10 @@ serve(async (req) => {
     // Upsert holdings
     const { error: upsertErr } = await supabase.from("holdings").upsert(
       parsed.map((item) => ({
-        user_id: user.data?.user?.id ?? Deno.env.get("TEST_USER_ID"),
+        user_email: user.data?.user?.email ?? "rcy007@gmail.com",
         ...item,
       })),
-      { onConflict: "user_id,symbol" }
+      { onConflict: "user_email,symbol" }
     );
 
     if (upsertErr) {

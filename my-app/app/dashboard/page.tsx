@@ -1,7 +1,6 @@
 import { supabaseServer } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import PortfolioTable from "@/components/PortfolioTable";
-import PriceChart from "@/components/PriceChart";
 import PortfolioUpload from "@/components/PortfolioUpload";
 import type { Holding } from "@/components/PortfolioTable";
 import { Card } from "@/components/ui";
@@ -21,14 +20,14 @@ export default async function DashboardPage() {
 
   const { data: holdings, error } = await supabase
     .from("holdings")
-    .select("id, symbol, quantity, avg_price, current_price, source, buy_date")
+    .select("id, user_email, symbol, quantity, avg_price, source, buy_date")
     .order("symbol", { ascending: true });
 
   if (error) throw new Error(error.message);
 
-  const totalPL = holdings?.reduce((acc, h) => {
-    if (h.current_price == null || h.avg_price == null) return acc;
-    return acc + (h.current_price - h.avg_price) * h.quantity;
+  const totalInvested = holdings?.reduce((acc, h) => {
+    if (h.avg_price == null) return acc;
+    return acc + h.avg_price * h.quantity;
   }, 0);
 
   return (
@@ -53,9 +52,9 @@ export default async function DashboardPage() {
       </div>
 
       <Card className="p-4 bg-white/60 dark:bg-black/40 backdrop-blur-xs shadow-sm rounded-xl">
-        <p className="text-sm font-medium">Total P/L</p>
-        <p className={`text-3xl font-bold ${totalPL && totalPL > 0 ? "text-green-500" : "text-red-500"}`}>
-          {totalPL?.toFixed(2) ?? "-"}
+        <p className="text-sm font-medium">Total Invested</p>
+        <p className="text-3xl font-bold text-blue-600">
+          ${totalInvested?.toFixed(2) ?? "0.00"}
         </p>
       </Card>
 
